@@ -1,24 +1,174 @@
-== Exercise Three - Working with Inventory Groups
+:imagesdir: ../_images
 
-For our example, I created 2 EC2 instances with the `user_id` value of bsmith (we'll call him Billy). You can see his Inventory Group in Figure 18 above. Let's make sure his systems are up and available. We can do this with his Inventory Group. For this exercise, do the same thing with your inventory group.
+== Exercise Three - Working with Docker Images
 
-[TIP]
-For this lab substitute your own Inventory Group for `tag_user_id_bsmith`.
 
-In the Inventories page, select the `tag_user_id_bsmith` group and click the `RUN COMMANDS` button that became available when you selected the group.
+== Run Docker
 
-In the new dialog box that opens up, select the 'Ping' module and use our `ansible-lab-instances` Machine Credential.
+When you execute a docker run command, you essentially spin up and create a new container from a Docker image. That container consists of the contents of the image, plus features based on any additional options you pass on the docker run command line.
 
-image::figure19.png[title="Running an Arbitrary Command using an Inventory Group"]
+The command you pass on the docker run command line sees the inside the container as its running environment so, by default, very little can be seen of the host system. For example, by default, the running applications sees:
 
-Next, click the `Launch` button.
+- The file system provided by the Docker image.
 
-If all goes well, we will get a pong back from all of your systems.
+- A new process table from inside the container (no processes from the host can be seen).
 
-image::figure20.png[title="Successful Pongs from our Inventory Group"]
+- New network interfaces (by default, a separate docker network interface provides a private IP address to each container via DHCP).
 
-With a few mouse clicks, we can run powerful arbitrary commands on any subset of our infrastructure. Pretty Awesome!
+If you want to make a directory from the host available to the container, map network ports from the container to the host, limit the amount of memory the container can use, or expand the CPU shares available to the container, you can do those things from the docker run command line.
 
-[TIP]
-You can, of course, select multiple groups, or individual hosts, before launching your Commands.
+Launch a container and explore inside interactively.
 
+.Docker run command
+[source]
+----
+docker run --rm -it registry.access.redhat.com/rhel7/rhel /bin/bash
+----
+
+
+== Docker Volumes
+
+The following command will fail as the "ip" command is not present in the base rhel7
+container image
+
+=== Volume Mounts
+.nonexistent command
+[source]
+----
+docker run --rm -it rhel7 /usr/sbin/ip a
+----
+
+Running the same command with the -v switch will run the ip command successfully
+
+.mounting  ip command via volumes
+[source]
+----
+docker run -v /usr/sbin:/usr/sbin --rm -ti rhel7 /usr/sbin/ip a
+----
+
+=== Volume Mounts (continued)
+Volume mounts can be used for logging to the container host for event retention
+
+.mounting logs via volumes
+[source]
+----
+docker run -v /dev/log:/dev/log --rm rhel logger \
+"Testing logging to the host”
+----
+
+Search for the container event on the container host log
+
+.search the container host
+[source]
+----
+journalctl | grep "Testing logging"
+----
+
+=== Persistent container data
+
+The -w switch specifies the working directory where binaries are executed.  If unspecified, the root directory (/) is used.
+
+.Run Python simple server
+[source]
+----
+docker run -d -p 8080:8000 --name="python_web" \
+       -w /opt \
+       -v /opt/rhel_data:/opt rhel7 \
+       /bin/python -m SimpleHTTPServer 8000
+----
+
+Verify the container is running using the docker `ps` switch
+
+[source]
+----
+docker ps
+
+CONTAINER ID IMAGE COMMAND                CREATED        STATUS    PORTS                   NAMES
+6932ab070fa5 rhel  "/bin/python -m Simpl" 2 minutes ago  Up 2 min  0.0.0.0:8080->8000/tcp  python_web
+----
+
+Run the following URL command to show there are no files present in the container’s
+/opt directory.
+
+.Check to see no files in opt
+[source]
+----
+curl localhost:8080
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN"><html>
+<title>Directory listing for /</title>
+<body>
+<h2>Directory listing for /</h2>
+<hr>
+<ul>
+</ul>
+<hr>
+</body>
+</html>
+----
+
+Now create several files with a script.
+
+.for loop script
+[source]
+----
+for i in {1..10}; do touch /opt/rhel_data/file${i}; done
+curl localhost:8080
+----
+
+.Check to see new files in opt
+[source]
+----
+curl localhost:8080
+
+ADD FILES HERE
+----
+
+== Container metadata
+
+Docker images have metadata associated with them that can tell you a lot about processes and network settings.
+
+.Docker inspect
+[source]
+----
+docker inspect python_web
+
+[{
+    "AppArmorProfile": "",
+    "Args": [
+        "-m",
+        "SimpleHTTPServer",
+        "8000"
+    ],
+...
+    "ProcessLabel": "system_u:system_r:svirt_lxc_net_t:s0:c253,c723",
+...
+----
+
+=== Scripting Pro Tips
+
+You can use a dot notation to parse the metadata returned by docker inspect and use it in your scripting to quickly access properties you need.
+
+[source]
+----
+# docker inspect -f {{.NetworkSettings.IPAddress}} python_web
+
+172.17.0.3
+
+# docker run --rm –ti rhel7 bash
+
+[root@790377e6e083 ~]# cat /proc/1/cgroup
+10:hugetlb:/system.slice/docker-790377e6e083a5461b40406908d2cbb74389fadac0e2db611bf87674a1c4dc3d.scope
+9:perf_event:/
+8:blkio:/system.slice/docker-790377e6e083a5461b40406908d2cbb74389fadac0e2db611bf87674a1c4dc3d.scope
+7:net_cls:/system.slice/docker-790377e6e083a5461b40406908d2cbb74389fadac0e2db611bf87674a1c4dc3d.scope
+6:freezer:/system.slice/docker-790377e6e083a5461b40406908d2cbb74389fadac0e2db611bf87674a1c4dc3d.scope
+5:devices:/system.slice/docker-790377e6e083a5461b40406908d2cbb74389fadac0e2db611bf87674a1c4dc3d.scope
+4:memory:/system.slice/docker-790377e6e083a5461b40406908d2cbb74389fadac0e2db611bf87674a1c4dc3d.scope
+3:cpuacct,cpu:/system.slice/docker-790377e6e083a5461b40406908d2cbb74389fadac0e2db611bf87674a1c4dc3d.scope
+2:cpuset:/system.slice/docker-790377e6e083a5461b40406908d2cbb74389fadac0e2db611bf87674a1c4dc3d.scope
+1:name=systemd:/system.slice/docker-790377e6e083a5461b40406908d2cbb74389fadac0e2db611bf87674a1c4dc3d.scope
+----
+
+
+image::redhat.svg[title=""]

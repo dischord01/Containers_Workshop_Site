@@ -1,40 +1,103 @@
-== Exercise Two - Working with Inventories
+:imagesdir: ../_images
 
-[IMPORTANT]
-If you are having trouble creating an instance or two, shout loud and start waving your hands!
+== Exercise Two - Pulling Docker Images
 
-=== Creating Amazon Tags
 
-Now that we all have our own vm's created, let's do some work with them. First off, we need a way to distinguish your systems from the other lab systems that we just created. Luckily, we've already thought of that for us.
+=== Pull Images
 
-Each instance that was created in EC2 had two tags attached to it as well. The first, `ansible_lab`, is the same for everyone. It allows us to easily find and remove these test instances at the end of our lab today. After all, EC2 is cheap, but it ain't free. :)
-
-The second tag is called `user_id`, and is set to the value that you set when you ran you EC2 Creation Job.
-
-The relevant part of the task is
-
+.Docker pull command
 [source]
 ----
-  ec2:
-...
-    instance_tags:
-      ansible_lab: true
-      user_id: "{{ user_tag }}"
+# docker pull registry.access.redhat.com/rhel7/rhel
 ----
 
-image::figure17.png[title="Amazon Tagging that was created by our Job"]
+An image is identified by a repository name (registry.access.redhat.com), a namespace name (rhel7) and the image name (rhel). You could also add a tag (which defaults to :latest if not entered). The repository name rhel, when passed to the docker pull command without the name of a registry preceding it, is ambiguous and could result in the retrieval of an image that originates from an untrusted registry. If there are multiple versions of the same image, adding a tag, such as latest to form a name such as rhel:latest, lets you choose the image more explicitly.
 
-=== Leveraging Amazon Tags in Tower
+.Docker images command
+[source]
+----
+# docker images
+REPOSITORY                              TAG       IMAGE ID        CREATED       SIZE
+registry.access.redhat.com/rhel7/rhel   latest    98a88a8b722a    5 weeks ago   201.4 MB
+----
 
-After we created our instances we updated our EC2 Inventory. As part of this update, Tower pulled in all of the tags that are in EC2 and correlated them back to our Inventory. For each unique tag value, Tower auto-creates a group that we can leverage. You can access these groups through your Inventory.
+=== Inspecting the Docker environment
+Now that you have the docker and docker-distribution services running, with a few containers available, you can start investigating the Docker environment and looking into what makes up a container. Run docker with the version and info options to get a feel for your Docker environment.
 
-They are created with the taxonomy:
+.Docker version command
+[source]
+----
+# docker version
 
-`tag_tagname_tagvalue`
+Client:
+ Version:         1.10.3
+ API version:     1.22
+ Package version: docker-common-1.10.3-46.el7.14.x86_64
+ Go version:      go1.6.2
+ Git commit:      5206701-unsupported
+ Built:           Mon Aug 29 14:00:01 2016
+ OS/Arch:         linux/amd64
 
-For example, for our `user_id` tag, when I used `jduncan` as the value in my Job Template, Tower created the tag `tag_user_id_jduncan`.
+Server:
+ Version:         1.10.3
+ API version:     1.22
+ Package version: docker-common-1.10.3-46.el7.14.x86_64
+ Go version:      go1.6.2
+ Git commit:      5206701-unsupported
+ Built:           Mon Aug 29 14:00:01 2016
+ OS/Arch:         linux/amd64
+----
 
-In the Inventories page, I can select these tag groups and do work on them as a whole.
 
-image::figure18.png[title="Using Amazon Tags to Create Dynamic Groups in Ansible Tower"]
+.Docker info command
+[source]
+----
+# docker info
 
+Containers: 0
+ Running: 0
+ Paused: 0
+ Stopped: 0
+Images: 1
+Server Version: 1.10.3
+Storage Driver: devicemapper
+ Pool Name: docker-202:2-8531431-pool
+ Pool Blocksize: 65.54 kB
+ Base Device Size: 10.74 GB
+ Backing Filesystem: xfs
+ Data file: /dev/loop0
+ Metadata file: /dev/loop1
+ Data Space Used: 255.5 MB
+ Data Space Total: 107.4 GB
+ Data Space Available: 9.053 GB
+ Metadata Space Used: 712.7 kB
+ Metadata Space Total: 2.147 GB
+ Metadata Space Available: 2.147 GB
+ Udev Sync Supported: true
+ Deferred Removal Enabled: false
+ Deferred Deletion Enabled: false
+ Deferred Deleted Device Count: 0
+ Data loop file: /var/lib/docker/devicemapper/devicemapper/data
+ Metadata loop file: /var/lib/docker/devicemapper/devicemapper/metadata
+ Library Version: 1.02.107-RHEL7 (2016-06-09)
+Execution Driver: native-0.2
+Logging Driver: journald
+Plugins:
+ Volume: local
+ Network: bridge null host
+ Authorization: rhel-push-plugin
+Kernel Version: 3.10.0-327.el7.x86_64
+Operating System: Employee SKU
+OSType: linux
+Architecture: x86_64
+Number of Docker Hooks: 2
+CPUs: 1
+Total Memory: 1.796 GiB
+Name: ip-172-22-1-152.ec2.internal
+ID: 7VKA:KHCZ:HYWH:KMWI:WQOK:AENF:N5RR:IEJO:53DO:B6D4:WW66:LP4R
+WARNING: bridge-nf-call-iptables is disabled
+WARNING: bridge-nf-call-ip6tables is disabled
+Registries: registry.access.redhat.com (secure), docker.io (secure)
+----
+
+image::redhat.svg[title=""]

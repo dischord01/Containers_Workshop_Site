@@ -28,12 +28,6 @@ Topics:
     File: index
   - Name: Setup
     File: setup
-  - Name: Organizations
-    File: organizations
-  - Name: Projects
-    File: projects
-  - Name: Job Templates
-    File: job-templates
   - Name: Exercise 1
     File: exercise1
   - Name: Exercise 2
@@ -42,8 +36,17 @@ Topics:
     File: exercise3
   - Name: Exercise 4
     File: exercise4
+  - Name: Exercise 5
+    File: exercise5
   - Name: Wrap Up
     File: wrapup
+
+---
+Name: OpenShift
+Dir: openshift
+Topics:
+  - Name: OpenShift Features
+    File: openshift-features
 
 ---
 Name: Resources
@@ -51,5 +54,3 @@ Dir: resources
 Topics:
   - Name: Links
     File: links
-
-

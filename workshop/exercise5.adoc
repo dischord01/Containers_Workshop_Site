@@ -1,0 +1,75 @@
+:imagesdir: ../_images
+
+== Exercise Five - Working with Docker Registry
+
+=== What it is
+The Registry is a stateless, highly scalable server side application that stores and lets you distribute Docker images. The Registry is open-source, under the permissive Apache license.
+
+=== Why use it
+You should use the Registry if you want to:
+
+- tightly control where your images are being stored
+- fully own your images distribution pipeline
+- integrate image storage and distribution tightly into your in-house development workflow
+
+
+.Install Registry
+[source]
+----
+# yum install –y docker-registry
+----
+
+.Enable & Start
+[source]
+----
+# systemctl enable docker-registry
+# systemctl start docker-registry
+----
+
+.Edit Registry
+[source]
+----
+# vim /etc/sysconfig/docker
+	--insecure-registry 0.0.0.0/0
+----
+
+.Restart
+[source]
+----
+# systemctl restart docker
+----
+
+
+.View Current Images
+[source]
+----
+# docker images
+REPOSITORY                        TAG                 IMAGE ID            CREATED             VIRTUAL SIZE
+fedora_postgresql                 latest              93e0fb06be2b        7 minutes ago       407.3 MB
+docker.io/fedora                  latest              c7d2f0130dae        8 days ago          204.3 MB
+registry.access.redhat.com/rhel   latest              c4f590bbcbe3        12 days ago         158.2 MB
+----
+
+.Find AMI Public IP
+[source]
+----
+# PUBLIC_IP=$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4)
+----
+
+.Tag fedora_postgresql
+[source]
+----
+# docker tag 93e0fb06be2b ${PUBLIC_IP}:5000/fedora_postgresql
+----
+
+.Push fedora_postgresql
+[source]
+----
+# docker push ${PUBLIC_IP}:5000/fedora_postgresql
+----
+
+
+
+
+
+image::redhat.svg[title=""]

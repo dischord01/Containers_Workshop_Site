@@ -1,0 +1,5 @@
+:imagesdir: ../_images
+
+
+
+image::1-thumbnail.png[]
