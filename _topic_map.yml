@@ -45,8 +45,24 @@ Topics:
 Name: OpenShift
 Dir: openshift
 Topics:
-  - Name: OpenShift Features
+  - Name: Trusted Host
     File: openshift-features
+  - Name: Interface & Controls
+    File: interface-controls
+  - Name: Standard Container Core
+    File: standard-container-core
+  - Name: Container Networking
+    File: container-networking
+  - Name: Container Storage
+    File: container-storage
+  - Name: Container Registry
+    File: container-registry
+  - Name: Web Scale Orchestration
+    File: web-scale-orchestration
+  - Name: Build & Deployment Automation
+    File: build-deployment-automation
+  - Name: Application Services
+    File: application-services
 
 ---
 Name: Resources

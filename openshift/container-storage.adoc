@@ -1,0 +1,5 @@
+:imagesdir: images
+
+
+
+image::5-thumbnail.png['Features']
