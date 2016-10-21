@@ -171,4 +171,4 @@ You can use a dot notation to parse the metadata returned by docker inspect and 
 ----
 
 
-image::redhat.svg[title=""]
+image::redhat.svg['Red Hat']

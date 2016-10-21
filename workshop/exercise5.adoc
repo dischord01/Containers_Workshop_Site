@@ -72,4 +72,4 @@ registry.access.redhat.com/rhel   latest              c4f590bbcbe3        12 day
 
 
 
-image::redhat.svg[title=""]
+image::redhat.svg['Red Hat']

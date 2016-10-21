@@ -100,4 +100,4 @@ WARNING: bridge-nf-call-ip6tables is disabled
 Registries: registry.access.redhat.com (secure), docker.io (secure)
 ----
 
-image::redhat.svg[title=""]
+image::redhat.svg['Red Hat']

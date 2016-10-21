@@ -60,4 +60,4 @@ CMD ["/bin/postgres", "-D", "/var/lib/pgsql/data", "-c", "config_file=/var/lib/p
 
 
 
-image::redhat.svg[title=""]
+image::redhat.svg['Red Hat']
