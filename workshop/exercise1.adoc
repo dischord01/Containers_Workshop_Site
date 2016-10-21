@@ -35,4 +35,4 @@ Then to start the docker daemon right away we use the start command.
 ----
 
 
-image::redhat.svg[]
+image::redhat.svg['Red Hat']
