@@ -2,4 +2,4 @@
 
 
 
-image::1-thumbnail.png[]
+image::1-thumbnail.png['Features']
