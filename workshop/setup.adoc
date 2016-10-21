@@ -1,4 +1,4 @@
-:imagesdir: ../_images
+:imagesdir: images
 
 == Setup
 
@@ -47,3 +47,5 @@ ssh-agent bash
 ssh-add ~/Downloads/containers*pem
 ssh ec2-user@student.3.redhat-fierce.io
 ----
+
+image::redhat.svg['Red Hat']

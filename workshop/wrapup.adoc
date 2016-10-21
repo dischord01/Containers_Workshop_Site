@@ -1,4 +1,4 @@
-:imagesdir: ../_images
+:imagesdir: images
 
 == Wrap Up, Q&A, and Free Style
 
