@@ -6,10 +6,15 @@ Install `ascii_binder`.
 
 	http://www.asciibinder.org/latest/guides/user_guide.html
 
+Asciidoc Refrence Guide:
+
+	http://asciidoctor.org/docs/asciidoc-syntax-quick-reference/
+
 
 Use git to track your changes. 
 
 ```
+$ cd Containers_Workshop_Site
 $ git add .
 $ git commit -m "Initial commit on docs repo"
 ```
@@ -39,3 +44,6 @@ Then build it with `asciibinder`. This will build a website with html, css, and 
 $ asciibinder
 ```
 
+Then in `_preview/red-hat-public-sector/latest`, you will be able to copy the `latest` folder to a S3 bucket and enable static website hosting.  
+
+<TO DO> S3 Bucket hosting how to.
