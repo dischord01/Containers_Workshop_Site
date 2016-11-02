@@ -27,7 +27,7 @@ cd resources
 touch newfile.adoc
 ```
 
-Then add the folder and file structure to the `_topicmap.adoc`
+Then add the folder and file structure to the `_topicmap.yml`
 
 ```
 ---
@@ -35,7 +35,7 @@ Name: Resources
 Dir: resources
 Topics:
   - Name: Resource
-    File: newfile.adoc
+    File: newfile
 ```
 
 Then build it with `asciibinder`. This will build a website with html, css, and js in `_preview`. From here you can take that folder and deploy it to a webserver of your choice.
